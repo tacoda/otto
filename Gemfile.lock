@@ -22,6 +22,7 @@ GEM
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
     thor (1.2.1)
+    webrick (1.7.0)
 
 PLATFORMS
   arm64-darwin-21
@@ -31,6 +32,7 @@ DEPENDENCIES
   ottogen!
   rspec
   thor (~> 1.2, >= 1.2.1)
+  webrick (~> 1.7)
 
 BUNDLED WITH
    2.3.3
