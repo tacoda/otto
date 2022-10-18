@@ -21,6 +21,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
+    thor (1.2.1)
 
 PLATFORMS
   arm64-darwin-21
@@ -29,6 +30,7 @@ DEPENDENCIES
   asciidoctor (~> 2.0, >= 2.0.18)
   ottogen!
   rspec
+  thor (~> 1.2, >= 1.2.1)
 
 BUNDLED WITH
    2.3.3

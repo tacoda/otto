@@ -1,7 +1,10 @@
+require 'asciidoctor'
+
 module Ottogen
   class Ottogen
-    def self.hello
-      puts 'hello there'
+    def self.hello(name)
+      puts "Hello #{name}"
+      # Asciidoctor.convert_file 'document.adoc', safe: :safe
     end
   end
 end
