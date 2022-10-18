@@ -19,9 +19,14 @@ module Ottogen
       Ottogen.clean
     end
 
+    desc "watch", "Watch changes to static site"
+    def watch
+      Ottogen.watch
+    end
+
     desc "serve", "Serve the static site"
     def serve
-      root = File.expand_path Dir.pwd
+      root = File.expand_path("#{Dir.pwd}/#{Ottogen::BUILD_DIR}")
       server = WEBrick::HTTPServer.new :Port => 8778, :DocumentRoot => root
       trap 'INT' do server.shutdown end
       server.start

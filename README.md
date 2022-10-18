@@ -35,3 +35,40 @@ otto serve
 open http://127.0.0.1:8778/
 ```
 
+# AsciiDoc Crash Course
+
+TODO
+
+**Paragraphs**
+
+**Text formatting**
+
+**Links**
+
+**Document header**
+
+**Section titles**
+
+**Automatic TOC**
+
+**Includes**
+
+**Lists**
+
+**Images**
+
+**Audio**
+
+**Videos**
+
+**Keyboard, button, and menu macros**
+
+**Literals and source code**
+
+**Admonitions**
+
+**More delimited blocks**
+
+**Tables**
+
+**IDs, roles, and options**
