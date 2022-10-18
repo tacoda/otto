@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'asciidoctor'
+# require 'asciidoctor'
+# require 'thor'
 
-Asciidoctor.convert_file 'document.adoc', safe: :safe
+require_relative '../lib/ottogen/ottogen'
+
+# Asciidoctor.convert_file 'document.adoc', safe: :safe
+
+Ottogen::Ottogen.hello
