@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'asciidoctor'
+
+Asciidoctor.convert_file 'document.adoc', safe: :safe
