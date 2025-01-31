@@ -224,7 +224,7 @@
                     </div>
                     <div class="mx-auto text-center mb-16">
                         <p class="mt-6 text-xl text-gray-900">
-                            Our generated HTML is generated under a <pre>_build</pre> directory.
+                            Our generated HTML is generated in a subdirectory named <pre>_build</pre>
                         </p>
                     </div>
                     <div
@@ -234,6 +234,45 @@
                             class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
                         >
 <code class="block text-sm">ls _build</code>
+                    </div>
+                    <div class="mx-auto text-center mb-16">
+                        <p class="mt-6 text-xl text-gray-900">
+                            The files in this folder are the statically generated site. Before building the site again, you may want to clean it first.
+                        </p>
+                    </div>
+                    <div
+                        class="max-w-md w-full bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">otto clean</code>
+                    </div>
+                    <div class="mx-auto text-center mb-16">
+                        <p class="mt-6 text-xl text-gray-900">
+                            For easy use, Otto includes a built-in server. This server is available at <pre>localhost:8778</pre>
+                        </p>
+                    </div>
+                    <div
+                        class="max-w-md w-full bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">otto server</code>
+                    </div>
+                    <div class="mx-auto text-center mb-16">
+                        <p class="mt-6 text-xl text-gray-900">
+                            Otto can also watch your project and automatically rebuild the site when changes are saved.
+                        </p>
+                    </div>
+                    <div
+                        class="max-w-md w-full bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">otto watch</code>
                     </div>
                 </div>
             </main>
