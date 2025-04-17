@@ -1,10 +1,10 @@
 Gem::Specification.new do |s| 
     s.name         = "ottogen"
-    s.version      = "0.0.1"
+    s.version      = "0.1.0"
     s.author       = "Ian Johnson"
     s.email        = "tacoda@hey.com"
     s.summary      = "AsciiDoc static site generator"
-    s.homepage     = "https://github.com/tacoda/ottogen"
+    s.homepage     = "https://www.tacoda.dev/otto/"
     s.licenses     = ['MIT']
     s.description  = File.read(File.join(File.dirname(__FILE__), 'README.md'))
     
