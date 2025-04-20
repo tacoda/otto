@@ -13,6 +13,15 @@ module Ottogen
       Ottogen.build
     end
 
+    map "b" => :build
+
+    desc "generate PAGE", "Generate a new page"
+    def generate(page)
+      Ottogen.generate(page)
+    end
+
+    map "g" => :generate
+
     desc "clean", "Clean the static site"
     def clean
       Ottogen.clean
@@ -27,5 +36,7 @@ module Ottogen
     def serve
       Ottogen.serve
     end
+
+    map "s" => :serve
   end
 end
