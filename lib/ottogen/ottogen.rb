@@ -35,13 +35,14 @@ ADOC
       puts "🔨 Building static site..."
       error_if_not_otto_project
       Dir.mkdir(BUILD_DIR) unless Dir.exist?(BUILD_DIR)
-      Dir.glob('**/*.adoc').map do |name|
+      Dir.glob('pages/**/*.adoc').map do |name|
         name.split('.').first
       end.each do |doc|
+        page = doc.sub(/^pages\//, '')
         Asciidoctor.convert_file "#{doc}.adoc",
                                  safe: :safe,
                                  mkdirs: true,
-                                 to_file: "#{BUILD_DIR}/#{doc}.html"
+                                 to_file: "#{BUILD_DIR}/#{page}.html"
       end
       puts "✅"
     end
@@ -50,7 +51,7 @@ ADOC
       puts "📝 Generating a new page..."
       error_if_not_otto_project
       page_title = page.split('-').map(&:capitalize).join(' ')
-      File.write("#{page}.adoc", "= #{page_title}\n")
+      File.write("pages/#{page}.adoc", "= #{page_title}\n")
     end
 
     def self.clean
@@ -90,13 +91,15 @@ ADOC
       Dir.mkdir(dir)
       FileUtils.touch("#{dir}/.otto")
       File.write("#{dir}/config.yml", CONFIG)
-      File.write("#{dir}/index.adoc", WELCOME)
+      FileUtils.mkdir_p("#{dir}/pages")
+      File.write("#{dir}/pages/index.adoc", WELCOME)
     end
 
     def self.init_in_current_dir
       FileUtils.touch(".otto")
       File.write("config.yml", CONFIG)
-      File.write("index.adoc", WELCOME)
+      FileUtils.mkdir_p("#{dir}/pages")
+      File.write("pages/index.adoc", WELCOME)
     end
 
     def self.error_if_not_otto_project
