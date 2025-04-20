@@ -68,6 +68,9 @@ ADOC
       server = WEBrick::HTTPServer.new :Port => 8778, :DocumentRoot => root
       trap 'INT' do server.shutdown end
       server.start
+    rescue Errno::EADDRINUSE
+      puts "❌ Server port already in use"
+      exit(1)
     end
 
     def self.watch
