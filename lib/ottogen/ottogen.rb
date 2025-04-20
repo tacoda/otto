@@ -1,6 +1,7 @@
 require 'asciidoctor'
 require 'fileutils'
 require 'listen'
+require 'webrick'
 
 module Ottogen
   class Ottogen
@@ -32,6 +33,10 @@ ADOC
 
     def self.build
       puts "🔨 Building..."
+      if !File.exist?(".otto")
+        puts "❌ Error: Current directory is not an otto project"
+        exit(1)
+      end
       Dir.mkdir(BUILD_DIR) unless Dir.exist?(BUILD_DIR)
       Dir.glob('**/*.adoc').map do |name|
         name.split('.').first
@@ -51,8 +56,24 @@ ADOC
       puts "✅"
     end
 
+    def self.serve
+      puts "🤖 Starting server..."
+      if !File.exist?(".otto")
+        puts "❌ Error: Current directory is not an otto project"
+        exit(1)
+      end
+      root = File.expand_path("#{Dir.pwd}/#{Ottogen::BUILD_DIR}")
+      server = WEBrick::HTTPServer.new :Port => 8778, :DocumentRoot => root
+      trap 'INT' do server.shutdown end
+      server.start
+    end
+
     def self.watch
       puts "👀 Watching files..."
+      if !File.exist?(".otto")
+        puts "❌ Error: Current directory is not an otto project"
+        exit(1)
+      end
       listener = Listen.to(Dir.pwd, ignore: [/_build/]) do |modified, added, removed|
         puts(modified: modified, added: added, removed: removed)
         build
@@ -65,11 +86,13 @@ ADOC
 
     def self.init_with_dir(dir)
       Dir.mkdir(dir)
+      FileUtils.touch("#{dir}/.otto")
       File.write("#{dir}/config.yml", CONFIG)
       File.write("#{dir}/index.adoc", WELCOME)
     end
 
     def self.init_in_current_dir
+      FileUtils.touch(".otto")
       File.write("config.yml", CONFIG)
       File.write("index.adoc", WELCOME)
     end

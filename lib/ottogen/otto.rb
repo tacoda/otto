@@ -1,5 +1,4 @@
 require 'thor'
-require 'webrick'
 require_relative './ottogen'
 
 module Ottogen
@@ -26,10 +25,7 @@ module Ottogen
 
     desc "serve", "Serve the static site"
     def serve
-      root = File.expand_path("#{Dir.pwd}/#{Ottogen::BUILD_DIR}")
-      server = WEBrick::HTTPServer.new :Port => 8778, :DocumentRoot => root
-      trap 'INT' do server.shutdown end
-      server.start
+      Ottogen.serve
     end
   end
 end
