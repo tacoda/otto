@@ -5,20 +5,33 @@ require 'listen'
 module Ottogen
   class Ottogen
     BUILD_DIR = '_build'.freeze
+    CONFIG = <<~YAML
+title: "Otto site"
+YAML
     WELCOME = <<~ADOC
 = Welcome to Otto!
 
 Otto is a static site generator that uses AsciiDoc as a markup language.
 ADOC
 
-    def self.init
-      puts "✨ ..."
-      File.write("index.adoc", WELCOME)
+    def self.init(dir)
+      puts "✨ Initializing..."
+      if !dir.nil? and Dir.exist?(dir)
+        puts "❌ Error: Directory already exists"
+        exit(1)
+      end
+
+      if dir.nil?
+        init_in_current_dir
+      else
+        init_with_dir(dir)
+      end
+
       puts "✅"
     end
 
     def self.build
-      puts "🔨 ..."
+      puts "🔨 Building..."
       Dir.mkdir(BUILD_DIR) unless Dir.exist?(BUILD_DIR)
       Dir.glob('**/*.adoc').map do |name|
         name.split('.').first
@@ -32,7 +45,7 @@ ADOC
     end
 
     def self.clean
-      puts "🧽 ..."
+      puts "🧽 Cleaning..."
       return unless Dir.exist?(BUILD_DIR)
       FileUtils.rmtree(BUILD_DIR)
       puts "✅"
@@ -46,6 +59,19 @@ ADOC
       end
       listener.start
       sleep
+    end
+
+    private
+
+    def self.init_with_dir(dir)
+      Dir.mkdir(dir)
+      File.write("#{dir}/config.yml", CONFIG)
+      File.write("#{dir}/index.adoc", WELCOME)
+    end
+
+    def self.init_in_current_dir
+      File.write("config.yml", CONFIG)
+      File.write("index.adoc", WELCOME)
     end
   end
 end

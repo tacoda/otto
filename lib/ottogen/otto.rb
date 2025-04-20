@@ -4,9 +4,9 @@ require_relative './ottogen'
 
 module Ottogen
   class Otto < Thor
-    desc "init", "Initialize static site"
-    def init
-      Ottogen.init
+    desc "init [DIR]", "Initialize a new otto static site in DIR (defaults to the current directory)"
+    def init(dir=nil)
+      Ottogen.init(dir)
     end
 
     desc "build", "Build the static site"
