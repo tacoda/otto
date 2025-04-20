@@ -23,6 +23,11 @@ ADOC
       end
 
       if dir.nil?
+        files_in_current_dir = Dir.glob('**/*')
+        if !files_in_current_dir.empty?
+          puts "❌ Error: Directory must be empty"
+          exit(1)
+        end
         init_in_current_dir
       else
         init_with_dir(dir)
@@ -35,6 +40,7 @@ ADOC
       puts "🔨 Building static site..."
       error_if_not_otto_project
       Dir.mkdir(BUILD_DIR) unless Dir.exist?(BUILD_DIR)
+      FileUtils.cp_r 'assets/', "#{BUILD_DIR}/assets"
       Dir.glob('pages/**/*.adoc').map do |name|
         name.split('.').first
       end.each do |doc|
@@ -91,6 +97,7 @@ ADOC
       Dir.mkdir(dir)
       FileUtils.touch("#{dir}/.otto")
       File.write("#{dir}/config.yml", CONFIG)
+      FileUtils.mkdir_p("#{dir}/assets")
       FileUtils.mkdir_p("#{dir}/pages")
       File.write("#{dir}/pages/index.adoc", WELCOME)
     end
@@ -98,7 +105,8 @@ ADOC
     def self.init_in_current_dir
       FileUtils.touch(".otto")
       File.write("config.yml", CONFIG)
-      FileUtils.mkdir_p("#{dir}/pages")
+      FileUtils.mkdir_p("assets")
+      FileUtils.mkdir_p("pages")
       File.write("pages/index.adoc", WELCOME)
     end
 
