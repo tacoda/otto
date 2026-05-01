@@ -194,6 +194,39 @@ RSpec.describe Ottogen::Config do
     end
   end
 
+  describe '#tags' do
+    it 'is a hash of tag string to posts that have that tag' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-a.adoc', "---\ntags: [ruby, cli]\n---\nA\n")
+        File.write('_posts/2026-02-15-b.adoc', "---\ntags: [ruby]\n---\nB\n")
+
+        tags = described_class.load.tags
+
+        expect(tags.keys).to contain_exactly('ruby', 'cli')
+        expect(tags['ruby'].map(&:slug)).to contain_exactly('a', 'b')
+        expect(tags['cli'].map(&:slug)).to eq(['a'])
+      end
+    end
+  end
+
+  describe '#categories' do
+    it 'is a hash of category string to posts in that category' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-a.adoc', "---\ncategories: [dev]\n---\nA\n")
+        File.write('_posts/2026-02-15-b.adoc', "---\ncategories: [dev, ruby]\n---\nB\n")
+
+        cats = described_class.load.categories
+
+        expect(cats['dev'].map(&:slug)).to contain_exactly('a', 'b')
+        expect(cats['ruby'].map(&:slug)).to eq(['b'])
+      end
+    end
+  end
+
   describe '#collections' do
     it 'exposes site.<collection_name> as the items array' do
       in_tmp_dir do

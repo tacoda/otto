@@ -380,4 +380,55 @@ RSpec.describe Ottogen::Ottogen do
       end
     end
   end
+
+  describe '.new_post' do
+    it 'creates _posts/<date>-<slug>.adoc with title and date front matter' do
+      in_otto_project do
+        capture_stdout { described_class.new_post('Hello World') }
+
+        expected = "_posts/#{Date.today.iso8601}-hello-world.adoc"
+        expect(File.exist?(expected)).to be true
+        body = File.read(expected)
+        expect(body).to include('title: Hello World')
+        expect(body).to include("date: #{Date.today.iso8601}")
+      end
+    end
+
+    it 'slugifies the title (lowercase, dashed)' do
+      in_otto_project do
+        capture_stdout { described_class.new_post('My Cool, Fancy Post!') }
+
+        expected = "_posts/#{Date.today.iso8601}-my-cool-fancy-post.adoc"
+        expect(File.exist?(expected)).to be true
+      end
+    end
+  end
+
+  describe '.doctor' do
+    it 'reports OK in a healthy project' do
+      in_otto_project do
+        output = capture_stdout { described_class.doctor }
+
+        expect(output).to include('✅')
+      end
+    end
+
+    it 'exits non-zero and reports problems when required files are missing' do
+      in_tmp_dir do
+        FileUtils.touch('.otto')
+        # config.yml and pages/ deliberately missing
+
+        buffer = StringIO.new
+        original = $stdout
+        $stdout = buffer
+        begin
+          expect { described_class.doctor }.to raise_error(SystemExit)
+        ensure
+          $stdout = original
+        end
+
+        expect(buffer.string).to include('config.yml')
+      end
+    end
+  end
 end

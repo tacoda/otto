@@ -42,5 +42,15 @@ module Ottogen
     end
 
     map 's' => :serve
+
+    desc 'post TITLE', "Generate a new post in _posts/ with today's date"
+    def post(title)
+      Ottogen.new_post(title)
+    end
+
+    desc 'doctor', 'Check the project for common configuration problems'
+    def doctor
+      Ottogen.doctor
+    end
   end
 end

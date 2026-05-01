@@ -1,74 +1,90 @@
 # Otto
 
-AsciiDoc static site generator.
+AsciiDoc-powered static site generator with Jekyll-style conventions: layouts, includes, data files, posts, drafts, permalinks, and custom collections.
 
-# Quickstart
+## Install
 
-**Install Otto**
-
-``` sh
+```sh
 gem install ottogen
 ```
 
-**Initialize a new site**
+Requires Ruby 3.0 or newer.
 
-``` sh
+## Quickstart
+
+```sh
 mkdir mysite && cd mysite
 otto init
-```
-
-**Build the site**
-
-``` sh
 otto build
-```
-
-**Serve the site**
-
-``` sh
 otto serve
-```
-
-**View the site**
-
-``` sh
 open http://127.0.0.1:8778/
 ```
 
-# AsciiDoc Crash Course
+For a longer walkthrough including AsciiDoc syntax, see [GUIDE.md](GUIDE.md).
 
-TODO
+## Commands
 
-**Paragraphs**
+| Command | Description |
+|---|---|
+| `otto init [DIR]` | Scaffold a new site (current dir if omitted) |
+| `otto build` | Render the site to `_build/` |
+| `otto build --drafts` | Include posts from `_drafts/` |
+| `otto watch` | Rebuild on file change |
+| `otto serve` | Serve `_build/` on port 8778 |
+| `otto generate PAGE` | Create a new page in `pages/` |
+| `otto post "Title"` | Create a new dated post in `_posts/` |
+| `otto clean` | Delete `_build/` |
+| `otto doctor` | Sanity-check project layout |
 
-**Text formatting**
+## Project layout
 
-**Links**
+```
+my-site/
+├── .otto                 # marker
+├── config.yml            # site config
+├── assets/               # copied verbatim into _build/
+├── pages/                # AsciiDoc pages, output mirrors path
+├── _layouts/             # ERB layouts (.html.erb)
+├── _includes/            # ERB partials
+├── _data/                # YAML/JSON files exposed as site.data.*
+├── _posts/               # YYYY-MM-DD-slug.adoc
+└── _drafts/              # undated drafts (excluded by default)
+```
 
-**Document header**
+## Configuration (`config.yml`)
 
-**Section titles**
+```yaml
+title: My Otto Site
+description: Things I write
+url: https://example.com
+baseurl: ""
 
-**Automatic TOC**
+permalink: /:year/:month/:day/:slug/
 
-**Includes**
+collections:
+  recipes:
+    output: true
+```
 
-**Lists**
+`permalink` accepts these tokens: `:year`, `:month`, `:day`, `:slug`, `:title`. Templates ending in `/` produce pretty URLs (`<path>/index.html`).
 
-**Images**
+## Pages and posts
 
-**Audio**
+Both support YAML front matter:
 
-**Videos**
+```adoc
+---
+layout: default
+title: Hello
+tags: [ruby, cli]
+---
+= Hello
 
-**Keyboard, button, and menu macros**
+Welcome to {site_title}. This page is at {page_url}.
+```
 
-**Literals and source code**
+Pages live under `pages/`; posts under `_posts/` with `YYYY-MM-DD-slug.adoc` names. Layouts wrap rendered AsciiDoc; partials in `_includes/` are pulled in via `<%= partial 'header.html' %>`.
 
-**Admonitions**
+## License
 
-**More delimited blocks**
-
-**Tables**
-
-**IDs, roles, and options**
+MIT

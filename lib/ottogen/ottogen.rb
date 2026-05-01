@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'asciidoctor'
+require 'date'
 require 'fileutils'
 require 'listen'
 require 'webrick'
@@ -99,6 +100,35 @@ module Ottogen
       error_if_not_otto_project
       page_title = page.split('-').map(&:capitalize).join(' ')
       File.write("pages/#{page}.adoc", "= #{page_title}\n")
+    end
+
+    def self.new_post(title)
+      error_if_not_otto_project
+      FileUtils.mkdir_p('_posts')
+      slug = Permalink.slugify(title)
+      date = Date.today
+      path = "_posts/#{date.iso8601}-#{slug}.adoc"
+      File.write(path, "---\ntitle: #{title}\ndate: #{date.iso8601}\n---\n\n")
+      puts "📝 Created #{path}"
+    end
+
+    def self.doctor
+      problems = collect_problems
+      if problems.empty?
+        puts '✅ All checks passed'
+      else
+        puts '❌ Problems:'
+        problems.each { |p| puts "  - #{p}" }
+        exit(1)
+      end
+    end
+
+    def self.collect_problems
+      problems = []
+      problems << '.otto marker missing (run `otto init` first)' unless File.exist?('.otto')
+      problems << 'config.yml missing' unless File.exist?('config.yml')
+      problems << 'pages/ directory missing' unless Dir.exist?('pages')
+      problems
     end
 
     def self.clean

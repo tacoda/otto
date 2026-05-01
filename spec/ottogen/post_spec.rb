@@ -110,6 +110,46 @@ RSpec.describe Ottogen::Post do
     end
   end
 
+  describe '#tags' do
+    it 'returns front matter tags as an array (list form)' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-hi.adoc', "---\ntags:\n  - ruby\n  - cli\n---\nBody.\n")
+
+        expect(described_class.read('_posts/2026-01-15-hi.adoc').tags).to eq(%w[ruby cli])
+      end
+    end
+
+    it 'returns empty array when not present' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-hi.adoc', "= Hi\n")
+
+        expect(described_class.read('_posts/2026-01-15-hi.adoc').tags).to eq([])
+      end
+    end
+
+    it 'wraps a single-string tag value into a one-element array' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-hi.adoc', "---\ntags: ruby\n---\nBody.\n")
+
+        expect(described_class.read('_posts/2026-01-15-hi.adoc').tags).to eq(%w[ruby])
+      end
+    end
+  end
+
+  describe '#categories' do
+    it 'returns front matter categories as an array' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-hi.adoc', "---\ncategories:\n  - dev\n  - ruby\n---\nBody.\n")
+
+        expect(described_class.read('_posts/2026-01-15-hi.adoc').categories).to eq(%w[dev ruby])
+      end
+    end
+  end
+
   describe '.discover_drafts' do
     it 'returns drafts from _drafts/' do
       in_tmp_dir do

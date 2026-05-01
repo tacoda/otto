@@ -18,7 +18,7 @@ module Ottogen
     end
 
     def self.slugify(str)
-      str.to_s.downcase.gsub(/[^a-z0-9]+/, '-').sub(/^-/, '').sub(/-$/, '')
+      str.to_s.downcase.gsub(/[^a-z0-9]+/, '-').sub(/\A-/, '').sub(/-\z/, '')
     end
 
     attr_reader :path

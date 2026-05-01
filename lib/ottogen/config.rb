@@ -67,6 +67,21 @@ module Ottogen
 
     attr_reader :data, :posts, :collections
 
+    def tags
+      group_posts_by(&:tags)
+    end
+
+    def categories
+      group_posts_by(&:categories)
+    end
+
+    def group_posts_by(&block)
+      @posts.each_with_object({}) do |post, acc|
+        block.call(post).each { |key| (acc[key] ||= []) << post }
+      end
+    end
+    private :group_posts_by
+
     def [](key)
       @values[key.to_s]
     end

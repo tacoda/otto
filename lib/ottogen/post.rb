@@ -64,6 +64,14 @@ module Ottogen
       @front_matter['title'] || slug.split('-').map(&:capitalize).join(' ')
     end
 
+    def tags
+      Array(@front_matter['tags'])
+    end
+
+    def categories
+      Array(@front_matter['categories'])
+    end
+
     def url
       return @permalink.url if @permalink
 
