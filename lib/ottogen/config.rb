@@ -3,6 +3,7 @@
 require 'json'
 require 'yaml'
 
+require_relative 'collection'
 require_relative 'post'
 
 module Ottogen
@@ -17,10 +18,17 @@ module Ottogen
       raise Error, "config.yml not found at #{path}" unless File.exist?(path)
 
       values = YAML.safe_load_file(path) || {}
-      new(values, load_data_files, load_posts(drafts: drafts))
+      new(values, load_data_files, load_posts(drafts: drafts), load_collections(values['collections']))
     rescue Psych::SyntaxError => e
       raise Error, "malformed YAML in #{path}: #{e.message}"
     end
+
+    def self.load_collections(config)
+      return {} unless config.is_a?(Hash)
+
+      config.to_h { |name, settings| [name, Collection.from_config(name, settings || {})] }
+    end
+    private_class_method :load_collections
 
     def self.load_posts(drafts: false)
       posts = Post.discover
@@ -50,13 +58,14 @@ module Ottogen
     end
     private_class_method :load_data_files, :parse_data_file
 
-    def initialize(values, data_files = {}, posts = [])
+    def initialize(values, data_files = {}, posts = [], collections = {})
       @values = values
       @data = Data.new(data_files)
       @posts = posts
+      @collections = collections
     end
 
-    attr_reader :data, :posts
+    attr_reader :data, :posts, :collections
 
     def [](key)
       @values[key.to_s]
@@ -67,11 +76,13 @@ module Ottogen
     end
 
     def respond_to_missing?(name, include_private = false)
-      @values.key?(name.to_s) || super
+      key = name.to_s
+      @values.key?(key) || @collections.key?(key) || super
     end
 
     def method_missing(name, *args)
       key = name.to_s
+      return @collections[key].items if @collections.key?(key)
       return @values[key] if @values.key?(key)
 
       super

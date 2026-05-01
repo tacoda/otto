@@ -114,6 +114,39 @@ RSpec.describe Ottogen::Ottogen do
       end
     end
 
+    it 'renders collection items when output: true' do
+      in_otto_project(config: <<~YAML) do
+        title: T
+        collections:
+          recipes:
+            output: true
+      YAML
+        FileUtils.mkdir_p('_recipes')
+        File.write('_recipes/pizza.adoc', "= Pizza\n\nDough.\n")
+
+        capture_stdout { described_class.build }
+
+        expect(File.exist?('_build/recipes/pizza.html')).to be true
+        expect(File.read('_build/recipes/pizza.html')).to include('Dough.')
+      end
+    end
+
+    it 'does not render collection items when output: false' do
+      in_otto_project(config: <<~YAML) do
+        title: T
+        collections:
+          books:
+            output: false
+      YAML
+        FileUtils.mkdir_p('_books')
+        File.write('_books/midnight.adoc', "= Midnight\n")
+
+        capture_stdout { described_class.build }
+
+        expect(File.exist?('_build/books/midnight.html')).to be false
+      end
+    end
+
     it 'excludes drafts by default' do
       in_otto_project do
         FileUtils.mkdir_p('_drafts')

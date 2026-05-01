@@ -5,6 +5,7 @@ require 'fileutils'
 require 'listen'
 require 'webrick'
 
+require_relative 'collection_item'
 require_relative 'config'
 require_relative 'layout'
 require_relative 'page'
@@ -41,11 +42,15 @@ module Ottogen
       puts '🔨 Building static site...'
       error_if_not_otto_project
       config = load_config(drafts: drafts)
-      pages = load_pages
       FileUtils.mkdir_p(BUILD_DIR)
       FileUtils.cp_r 'assets/', "#{BUILD_DIR}/assets"
-      (pages + config.posts).each { |doc| convert_document(doc, config) }
+      documents_for(config).each { |doc| convert_document(doc, config) }
       puts '✅'
+    end
+
+    def self.documents_for(config)
+      collection_items = config.collections.values.flat_map { |c| c.output? ? c.items : [] }
+      load_pages + config.posts + collection_items
     end
 
     def self.load_pages

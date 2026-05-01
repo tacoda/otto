@@ -193,4 +193,24 @@ RSpec.describe Ottogen::Config do
       end
     end
   end
+
+  describe '#collections' do
+    it 'exposes site.<collection_name> as the items array' do
+      in_tmp_dir do
+        File.write('config.yml', <<~YAML)
+          title: T
+          collections:
+            recipes:
+              output: true
+        YAML
+        FileUtils.mkdir_p('_recipes')
+        File.write('_recipes/pizza.adoc', "= Pizza\n")
+        File.write('_recipes/bread.adoc', "= Bread\n")
+
+        config = described_class.load
+
+        expect(config.recipes.map(&:slug)).to contain_exactly('pizza', 'bread')
+      end
+    end
+  end
 end
