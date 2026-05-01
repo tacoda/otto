@@ -74,4 +74,79 @@ RSpec.describe Ottogen::Config do
       end
     end
   end
+
+  describe '#data' do
+    it 'reads .yml files from _data/ as data.<name>' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+        FileUtils.mkdir_p('_data')
+        File.write('_data/nav.yml', "- title: Home\n  url: /\n- title: About\n  url: /about\n")
+
+        config = described_class.load
+
+        expect(config.data.nav).to eq([{ 'title' => 'Home', 'url' => '/' },
+                                       { 'title' => 'About', 'url' => '/about' }])
+      end
+    end
+
+    it 'reads .json files from _data/ as data.<name>' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+        FileUtils.mkdir_p('_data')
+        File.write('_data/items.json', '[{"name":"one"},{"name":"two"}]')
+
+        config = described_class.load
+
+        expect(config.data.items).to eq([{ 'name' => 'one' }, { 'name' => 'two' }])
+      end
+    end
+
+    it 'supports both .yml and .yaml extensions' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+        FileUtils.mkdir_p('_data')
+        File.write('_data/short.yml', "key: yml\n")
+        File.write('_data/long.yaml', "key: yaml\n")
+
+        config = described_class.load
+
+        expect(config.data.short).to eq('key' => 'yml')
+        expect(config.data.long).to eq('key' => 'yaml')
+      end
+    end
+
+    it 'returns empty data when _data/ is missing or empty' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+
+        config = described_class.load
+
+        expect(config.data['nav']).to be_nil
+      end
+    end
+
+    it 'raises Config::Error for a malformed data file (with file path in message)' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+        FileUtils.mkdir_p('_data')
+        File.write('_data/bad.yml', "title: 'unclosed\n")
+
+        expect { described_class.load }
+          .to raise_error(Ottogen::Config::Error, %r{_data/bad\.yml})
+      end
+    end
+
+    it 'exposes entries via both [] and method_missing' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+        FileUtils.mkdir_p('_data')
+        File.write('_data/nav.yml', "- title: Home\n")
+
+        data = described_class.load.data
+
+        expect(data['nav']).to eq([{ 'title' => 'Home' }])
+        expect(data.nav).to eq([{ 'title' => 'Home' }])
+      end
+    end
+  end
 end

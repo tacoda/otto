@@ -114,6 +114,22 @@ RSpec.describe Ottogen::Ottogen do
       end
     end
 
+    it 'exposes site.data.<file> in layouts' do
+      in_otto_project do
+        FileUtils.mkdir_p('_layouts')
+        FileUtils.mkdir_p('_data')
+        File.write('_data/nav.yml', "- title: Home\n  url: /\n")
+        File.write('_layouts/default.html.erb', "<%= site.data.nav.first['title'] %>|<%= content %>")
+        File.write('pages/index.adoc', "---\nlayout: default\n---\nBody.\n")
+
+        capture_stdout { described_class.build }
+
+        html = File.read('_build/index.html')
+        expect(html).to include('Home|')
+        expect(html).to include('Body.')
+      end
+    end
+
     it 'embeds an include declared in the page layout' do
       in_otto_project do
         FileUtils.mkdir_p('_layouts')
@@ -220,6 +236,14 @@ RSpec.describe Ottogen::Ottogen do
         capture_stdout { described_class.init('site') }
 
         expect(Dir.exist?('site/_includes')).to be true
+      end
+    end
+
+    it 'scaffolds a _data/ directory' do
+      in_tmp_dir do
+        capture_stdout { described_class.init('site') }
+
+        expect(Dir.exist?('site/_data')).to be true
       end
     end
   end

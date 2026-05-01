@@ -152,15 +152,17 @@ module Ottogen
       scaffold('.')
     end
 
+    SCAFFOLD_DIRS = %w[assets pages _layouts _includes _data].freeze
+    SCAFFOLD_FILES = {
+      'config.yml' => CONFIG,
+      'pages/index.adoc' => WELCOME,
+      '_layouts/default.html.erb' => DEFAULT_LAYOUT
+    }.freeze
+
     def self.scaffold(root)
       FileUtils.touch(File.join(root, '.otto'))
-      File.write(File.join(root, 'config.yml'), CONFIG)
-      FileUtils.mkdir_p(File.join(root, 'assets'))
-      FileUtils.mkdir_p(File.join(root, 'pages'))
-      FileUtils.mkdir_p(File.join(root, '_layouts'))
-      FileUtils.mkdir_p(File.join(root, '_includes'))
-      File.write(File.join(root, 'pages', 'index.adoc'), WELCOME)
-      File.write(File.join(root, '_layouts', 'default.html.erb'), DEFAULT_LAYOUT)
+      SCAFFOLD_DIRS.each { |dir| FileUtils.mkdir_p(File.join(root, dir)) }
+      SCAFFOLD_FILES.each { |path, content| File.write(File.join(root, path), content) }
     end
 
     def self.error_if_not_otto_project
