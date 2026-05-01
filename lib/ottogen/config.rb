@@ -13,17 +13,19 @@ module Ottogen
     DATA_DIR = '_data'
     DATA_EXTENSIONS = %w[.yml .yaml .json].freeze
 
-    def self.load(path = DEFAULT_PATH)
+    def self.load(path = DEFAULT_PATH, drafts: false)
       raise Error, "config.yml not found at #{path}" unless File.exist?(path)
 
       values = YAML.safe_load_file(path) || {}
-      new(values, load_data_files, load_posts)
+      new(values, load_data_files, load_posts(drafts: drafts))
     rescue Psych::SyntaxError => e
       raise Error, "malformed YAML in #{path}: #{e.message}"
     end
 
-    def self.load_posts
-      Post.discover.sort_by(&:date).reverse
+    def self.load_posts(drafts: false)
+      posts = Post.discover
+      posts += Post.discover_drafts if drafts
+      posts.sort_by(&:date).reverse
     rescue Post::Error => e
       raise Error, e.message
     end

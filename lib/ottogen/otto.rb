@@ -11,8 +11,9 @@ module Ottogen
     end
 
     desc 'build', 'Build the static site'
+    option :drafts, type: :boolean, default: false, desc: 'Include drafts from _drafts/'
     def build
-      Ottogen.build
+      Ottogen.build(drafts: options[:drafts])
     end
 
     map 'b' => :build
@@ -30,8 +31,9 @@ module Ottogen
     end
 
     desc 'watch', 'Watch changes to static site'
+    option :drafts, type: :boolean, default: false, desc: 'Include drafts from _drafts/'
     def watch
-      Ottogen.watch
+      Ottogen.watch(drafts: options[:drafts])
     end
 
     desc 'serve', 'Serve the static site'

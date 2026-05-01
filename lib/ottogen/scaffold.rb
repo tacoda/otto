@@ -34,7 +34,7 @@ module Ottogen
       </html>
     ERB
 
-    DIRS = %w[assets pages _layouts _includes _data _posts].freeze
+    DIRS = %w[assets pages _layouts _includes _data _posts _drafts].freeze
     FILES = {
       'config.yml' => CONFIG,
       'pages/index.adoc' => WELCOME,

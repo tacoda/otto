@@ -37,10 +37,10 @@ module Ottogen
       puts '✅'
     end
 
-    def self.build
+    def self.build(drafts: false)
       puts '🔨 Building static site...'
       error_if_not_otto_project
-      config = load_config
+      config = load_config(drafts: drafts)
       pages = load_pages
       FileUtils.mkdir_p(BUILD_DIR)
       FileUtils.cp_r 'assets/', "#{BUILD_DIR}/assets"
@@ -119,12 +119,12 @@ module Ottogen
       exit(1)
     end
 
-    def self.watch
+    def self.watch(drafts: false)
       puts '👀 Watching files...'
       error_if_not_otto_project
       listener = Listen.to(Dir.pwd, ignore: [/_build/]) do |modified, added, removed|
         puts(modified: modified, added: added, removed: removed)
-        build
+        build(drafts: drafts)
       end
       listener.start
       sleep
@@ -146,8 +146,8 @@ module Ottogen
       exit(1)
     end
 
-    def self.load_config
-      Config.load
+    def self.load_config(drafts: false)
+      Config.load(drafts: drafts)
     rescue Config::Error => e
       puts "❌ Error: #{e.message}"
       exit(1)

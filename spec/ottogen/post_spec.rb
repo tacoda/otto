@@ -95,4 +95,38 @@ RSpec.describe Ottogen::Post do
       end
     end
   end
+
+  describe '.read_draft' do
+    it 'parses a draft filename and uses today as the date' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_drafts')
+        File.write('_drafts/in-progress.adoc', "= WIP\n\nBody.\n")
+
+        draft = described_class.read_draft('_drafts/in-progress.adoc')
+
+        expect(draft.slug).to eq('in-progress')
+        expect(draft.date).to eq(Date.today)
+      end
+    end
+  end
+
+  describe '.discover_drafts' do
+    it 'returns drafts from _drafts/' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_drafts')
+        File.write('_drafts/a.adoc', "= A\n")
+        File.write('_drafts/b.adoc', "= B\n")
+
+        slugs = described_class.discover_drafts.map(&:slug)
+
+        expect(slugs).to contain_exactly('a', 'b')
+      end
+    end
+
+    it 'returns an empty array when _drafts/ is missing' do
+      in_tmp_dir do
+        expect(described_class.discover_drafts).to eq([])
+      end
+    end
+  end
 end

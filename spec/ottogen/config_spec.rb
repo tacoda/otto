@@ -164,5 +164,33 @@ RSpec.describe Ottogen::Config do
         expect(slugs).to eq(%w[new mid old])
       end
     end
+
+    it 'excludes drafts by default' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+        FileUtils.mkdir_p('_posts')
+        FileUtils.mkdir_p('_drafts')
+        File.write('_posts/2026-01-15-real.adoc', "= R\n")
+        File.write('_drafts/wip.adoc', "= D\n")
+
+        slugs = described_class.load.posts.map(&:slug)
+
+        expect(slugs).to eq(%w[real])
+      end
+    end
+
+    it 'includes drafts when loaded with drafts: true' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+        FileUtils.mkdir_p('_posts')
+        FileUtils.mkdir_p('_drafts')
+        File.write('_posts/2020-01-01-real.adoc', "= R\n")
+        File.write('_drafts/wip.adoc', "= D\n")
+
+        slugs = described_class.load(drafts: true).posts.map(&:slug)
+
+        expect(slugs).to contain_exactly('real', 'wip')
+      end
+    end
   end
 end

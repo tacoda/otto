@@ -114,6 +114,29 @@ RSpec.describe Ottogen::Ottogen do
       end
     end
 
+    it 'excludes drafts by default' do
+      in_otto_project do
+        FileUtils.mkdir_p('_drafts')
+        File.write('_drafts/wip.adoc', "= WIP\n\nDraft body.\n")
+
+        capture_stdout { described_class.build }
+
+        expect(File.exist?('_build/wip.html')).to be false
+      end
+    end
+
+    it 'renders drafts when build is called with drafts: true' do
+      in_otto_project do
+        FileUtils.mkdir_p('_drafts')
+        File.write('_drafts/wip.adoc', "= WIP\n\nDraft body.\n")
+
+        capture_stdout { described_class.build(drafts: true) }
+
+        expect(File.exist?('_build/wip.html')).to be true
+        expect(File.read('_build/wip.html')).to include('Draft body.')
+      end
+    end
+
     it 'honors a per-document permalink: in front matter' do
       in_otto_project do
         FileUtils.mkdir_p('_posts')
@@ -313,6 +336,14 @@ RSpec.describe Ottogen::Ottogen do
         capture_stdout { described_class.init('site') }
 
         expect(Dir.exist?('site/_posts')).to be true
+      end
+    end
+
+    it 'scaffolds a _drafts/ directory' do
+      in_tmp_dir do
+        capture_stdout { described_class.init('site') }
+
+        expect(Dir.exist?('site/_drafts')).to be true
       end
     end
   end

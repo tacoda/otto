@@ -9,12 +9,21 @@ module Ottogen
     class Error < StandardError; end
 
     POSTS_DIR = '_posts'
+    DRAFTS_DIR = '_drafts'
     FILENAME_PATTERN = /\A(\d{4})-(\d{2})-(\d{2})-(.+)\.adoc\z/
 
     def self.read(path)
       date, slug = parse_filename(path)
       front_matter, body = FrontMatter.split(File.read(path), path)
       new(path: path, date: date, slug: slug, front_matter: front_matter, body: body)
+    rescue FrontMatter::Error => e
+      raise Error, e.message
+    end
+
+    def self.read_draft(path)
+      slug = File.basename(path, '.adoc')
+      front_matter, body = FrontMatter.split(File.read(path), path)
+      new(path: path, date: Date.today, slug: slug, front_matter: front_matter, body: body)
     rescue FrontMatter::Error => e
       raise Error, e.message
     end
@@ -32,6 +41,12 @@ module Ottogen
       return [] unless Dir.exist?(dir)
 
       Dir.glob(File.join(dir, '*.adoc')).map { |path| read(path) }
+    end
+
+    def self.discover_drafts(dir = DRAFTS_DIR)
+      return [] unless Dir.exist?(dir)
+
+      Dir.glob(File.join(dir, '*.adoc')).map { |path| read_draft(path) }
     end
 
     attr_reader :path, :date, :slug, :front_matter, :body
