@@ -82,5 +82,69 @@ RSpec.describe Ottogen::Layout do
         expect(result).to eq('<html><body><article><p>Hi</p></article></body></html>')
       end
     end
+
+    it 'embeds an _includes/<name> partial via partial(...)' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_layouts')
+        FileUtils.mkdir_p('_includes')
+        File.write('_includes/header.html', '<header>Top</header>')
+        File.write('_layouts/default.html.erb', "<%= partial 'header.html' %><%= content %>")
+
+        result = described_class.find('default').render(content: '<p>Hi</p>', site: site, page: page)
+
+        expect(result).to eq('<header>Top</header><p>Hi</p>')
+      end
+    end
+
+    it 'allows partials to reference site.<key>' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_layouts')
+        FileUtils.mkdir_p('_includes')
+        File.write('_includes/header.html', '<title><%= site.title %></title>')
+        File.write('_layouts/default.html.erb', "<%= partial 'header.html' %>")
+
+        result = described_class.find('default').render(content: '', site: site, page: page)
+
+        expect(result).to eq('<title>My Site</title>')
+      end
+    end
+
+    it 'allows partials to reference page.<key>' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_layouts')
+        FileUtils.mkdir_p('_includes')
+        File.write('_includes/header.html', '<h1><%= page.title %></h1>')
+        File.write('_layouts/default.html.erb', "<%= partial 'header.html' %>")
+
+        result = described_class.find('default').render(content: '', site: site, page: page)
+
+        expect(result).to eq('<h1>My Page</h1>')
+      end
+    end
+
+    it 'allows partials to include other partials' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_layouts')
+        FileUtils.mkdir_p('_includes')
+        File.write('_includes/inner.html', '<span>inner</span>')
+        File.write('_includes/outer.html', "<div><%= partial 'inner.html' %></div>")
+        File.write('_layouts/default.html.erb', "<%= partial 'outer.html' %>")
+
+        result = described_class.find('default').render(content: '', site: site, page: page)
+
+        expect(result).to eq('<div><span>inner</span></div>')
+      end
+    end
+
+    it 'raises Layout::Error when an include is missing' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('_layouts')
+        File.write('_layouts/default.html.erb', "<%= partial 'missing.html' %>")
+
+        expect do
+          described_class.find('default').render(content: '', site: site, page: page)
+        end.to raise_error(Ottogen::Layout::Error)
+      end
+    end
   end
 end

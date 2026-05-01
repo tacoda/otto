@@ -158,6 +158,7 @@ module Ottogen
       FileUtils.mkdir_p(File.join(root, 'assets'))
       FileUtils.mkdir_p(File.join(root, 'pages'))
       FileUtils.mkdir_p(File.join(root, '_layouts'))
+      FileUtils.mkdir_p(File.join(root, '_includes'))
       File.write(File.join(root, 'pages', 'index.adoc'), WELCOME)
       File.write(File.join(root, '_layouts', 'default.html.erb'), DEFAULT_LAYOUT)
     end

@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name         = 'ottogen'
-  s.version      = '0.4.0'
+  s.version      = '0.5.0'
   s.author       = 'Ian Johnson'
   s.email        = 'tacoda@hey.com'
   s.summary      = 'AsciiDoc static site generator'

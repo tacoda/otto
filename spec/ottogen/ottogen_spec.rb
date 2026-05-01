@@ -114,6 +114,22 @@ RSpec.describe Ottogen::Ottogen do
       end
     end
 
+    it 'embeds an include declared in the page layout' do
+      in_otto_project do
+        FileUtils.mkdir_p('_layouts')
+        FileUtils.mkdir_p('_includes')
+        File.write('_includes/header.html', '<header>Site Header</header>')
+        File.write('_layouts/default.html.erb', "<html><%= partial 'header.html' %><body><%= content %></body></html>")
+        File.write('pages/index.adoc', "---\nlayout: default\n---\n= Hi\n\nHello.\n")
+
+        capture_stdout { described_class.build }
+
+        html = File.read('_build/index.html')
+        expect(html).to include('<header>Site Header</header>')
+        expect(html).to include('Hello.')
+      end
+    end
+
     it 'chains layouts (post -> default)' do
       in_otto_project do
         FileUtils.mkdir_p('_layouts')
@@ -196,6 +212,14 @@ RSpec.describe Ottogen::Ottogen do
         path = 'site/_layouts/default.html.erb'
         expect(File.exist?(path)).to be true
         expect(File.read(path)).to include('<%= content %>')
+      end
+    end
+
+    it 'scaffolds an _includes/ directory' do
+      in_tmp_dir do
+        capture_stdout { described_class.init('site') }
+
+        expect(Dir.exist?('site/_includes')).to be true
       end
     end
   end

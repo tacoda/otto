@@ -40,6 +40,8 @@ module Ottogen
     end
 
     class Context
+      INCLUDES_DIR = '_includes'
+
       attr_reader :content, :site, :page
 
       def initialize(content:, site:, page:)
@@ -50,6 +52,13 @@ module Ottogen
 
       def binding_for_erb
         binding
+      end
+
+      def partial(name)
+        path = File.join(INCLUDES_DIR, name)
+        raise Error, "include '#{name}' not found at #{path}" unless File.exist?(path)
+
+        ERB.new(File.read(path), trim_mode: '-').result(binding_for_erb)
       end
     end
   end
