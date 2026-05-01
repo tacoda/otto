@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Otto - Guide</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+            referrerpolicy="no-referrer"
+        />
+        <script>
+            require("@tailwindcss/forms");
+        </script>
+    </head>
+    <body>
+        <div class="bg-gray-900">
+            <!-- Header -->
+            <header class="absolute inset-x-0 top-0 z-50">
+                <nav
+                    class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+                    aria-label="Global"
+                >
+                    <div class="flex lg:flex-1">
+                        <a href="/otto/" class="-m-1.5 p-1.5 text-xl"> 🤖 </a>
+                    </div>
+                    <div class="flex lg:flex-1 justify-center">
+                        <a
+                            href="/otto/guide/"
+                            class="text-gray-400 hover:text-gray-300 flex items-center gap-2"
+                        >
+                            Guide
+                        </a>
+                    </div>
+                    <div class="flex lg:flex-1 justify-end">
+                        <a
+                            href="https://github.com/tacoda/otto"
+                            class="text-gray-400 hover:text-gray-300 flex items-center gap-2"
+                        >
+                            <span class="sr-only">GitHub</span>
+                            <svg
+                                class="w-6 h-6"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                        </a>
+                    </div>
+                </nav>
+            </header>
+
+            <main class="relative isolate">
+                <!-- Background -->
+                <div
+                    class="absolute inset-x-0 top-4 -z-10 flex transform-gpu justify-center overflow-hidden blur-3xl"
+                    aria-hidden="true"
+                >
+                    <div
+                        class="aspect-[1108/632] w-[69.25rem] flex-none bg-gradient-to-r from-[#80caff] to-[#4f46e5] opacity-25"
+                        style="
+                            clip-path: polygon(
+                                73.6% 51.7%,
+                                91.7% 11.8%,
+                                100% 46.4%,
+                                97.4% 82.2%,
+                                92.5% 84.9%,
+                                75.7% 64%,
+                                55.3% 47.5%,
+                                46.5% 49.4%,
+                                45% 62.9%,
+                                50.3% 87.2%,
+                                21.3% 64.1%,
+                                0.1% 100%,
+                                5.4% 51.1%,
+                                21.4% 63.9%,
+                                58.9% 0.2%,
+                                73.6% 51.7%
+                            );
+                        "
+                    ></div>
+                </div>
+
+                <!-- Hero -->
+                <div class="px-6 pt-14 lg:px-8">
+                    <div class="mx-auto max-w-2xl pt-24 text-center sm:pt-40">
+                        <h1
+                            class="text-5xl font-semibold tracking-tight text-white sm:text-7xl"
+                        >
+                            Otto Guide
+                        </h1>
+                        <p
+                            class="mt-8 text-pretty text-lg font-medium text-gray-400 sm:text-xl/8"
+                        >
+                            From zero to a published Otto site, then the AsciiDoc
+                            syntax you'll use day to day.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Table of contents -->
+                <div class="mx-auto mt-24 max-w-3xl px-6 lg:px-8">
+                    <h2
+                        class="text-pretty text-3xl font-semibold tracking-tight text-white sm:text-4xl"
+                    >
+                        Contents
+                    </h2>
+                    <div
+                        class="mt-8 grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2 text-base/7 text-gray-300"
+                    >
+                        <a class="hover:text-white" href="#quickstart">Quickstart</a>
+                        <a class="hover:text-white" href="#authoring-a-page">Authoring a page</a>
+                        <a class="hover:text-white" href="#authoring-a-post">Authoring a post</a>
+                        <a class="hover:text-white" href="#layouts">Layouts</a>
+                        <a class="hover:text-white" href="#includes">Includes (partials)</a>
+                        <a class="hover:text-white" href="#data-files">Data files</a>
+                        <a class="hover:text-white" href="#collections">Collections</a>
+                        <a class="hover:text-white" href="#permalinks">Permalinks</a>
+                        <a class="hover:text-white" href="#drafts">Drafts</a>
+                        <a class="hover:text-white" href="#health-checks">Health checks</a>
+                        <a class="hover:text-white" href="#asciidoc-primer">AsciiDoc primer</a>
+                    </div>
+                </div>
+
+                <!-- Quickstart -->
+                <div
+                    id="quickstart"
+                    class="flex flex-col mt-48 pb-24 items-center justify-center bg-gray-100 px-4"
+                >
+                    <div class="mx-auto text-center mt-24 mb-12">
+                        <h2
+                            class="text-5xl font-semibold tracking-tight text-gray-900 sm:text-6xl"
+                        >
+                            Quickstart
+                        </h2>
+                    </div>
+                    <div
+                        class="max-w-md w-full bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">gem install ottogen</code>
+<code class="block text-sm">mkdir mysite && cd mysite</code>
+<code class="block text-sm">otto init</code>
+<code class="block text-sm">otto build</code>
+<code class="block text-sm">otto serve</code></pre>
+                    </div>
+                    <div class="max-w-2xl w-full mt-8">
+                        <p class="text-lg/8 text-gray-900 text-center">
+                            Open
+                            <code class="bg-gray-200 px-1 rounded">http://127.0.0.1:8778/</code>.
+                            You should see the welcome page wrapped in the
+                            default layout.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Authoring a page -->
+                <div
+                    id="authoring-a-page"
+                    class="mx-auto mt-24 max-w-3xl px-6 lg:px-8"
+                >
+                    <h2
+                        class="text-pretty text-4xl font-semibold tracking-tight text-white sm:text-5xl"
+                    >
+                        Authoring a page
+                    </h2>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Pages live under <code class="text-indigo-300">pages/</code>.
+                        The output path mirrors the source path, so
+                        <code class="text-indigo-300">pages/about.adoc</code>
+                        becomes <code class="text-indigo-300">/about.html</code>.
+                    </p>
+                    <div
+                        class="mt-8 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">---</code>
+<code class="block text-sm">layout: default</code>
+<code class="block text-sm">title: About</code>
+<code class="block text-sm">---</code>
+<code class="block text-sm">= About</code>
+<code class="block text-sm"></code>
+<code class="block text-sm">This is the about page.</code></pre>
+                    </div>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        The <code class="text-indigo-300">---</code> block is YAML
+                        front matter. Front matter values are exposed two ways:
+                    </p>
+                    <ul class="mt-4 list-disc pl-6 text-lg/8 text-gray-300 space-y-2">
+                        <li>
+                            In your AsciiDoc body:
+                            <code class="text-indigo-300">{page_title}</code>,
+                            <code class="text-indigo-300">{page_url}</code>,
+                            <code class="text-indigo-300">{site_title}</code>, etc.
+                        </li>
+                        <li>
+                            In your ERB layouts:
+                            <code class="text-indigo-300">&lt;%= page.title %&gt;</code>,
+                            <code class="text-indigo-300">&lt;%= site.title %&gt;</code>.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Authoring a post -->
+                <div
+                    id="authoring-a-post"
+                    class="mx-auto mt-24 max-w-3xl px-6 lg:px-8"
+                >
+                    <h2
+                        class="text-pretty text-4xl font-semibold tracking-tight text-white sm:text-5xl"
+                    >
+                        Authoring a post
+                    </h2>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Use
+                        <code class="text-indigo-300">otto post "My First Post"</code>
+                        to scaffold a new post. It creates
+                        <code class="text-indigo-300">_posts/YYYY-MM-DD-my-first-post.adoc</code>
+                        with front matter pre-filled.
+                    </p>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Posts share the same front matter and rendering pipeline
+                        as pages, with these extras:
+                    </p>
+                    <ul class="mt-4 list-disc pl-6 text-lg/8 text-gray-300 space-y-2">
+                        <li>The date and slug are derived from the filename.</li>
+                        <li>
+                            All posts appear in
+                            <code class="text-indigo-300">site.posts</code>,
+                            sorted by date descending.
+                        </li>
+                        <li>
+                            <code class="text-indigo-300">tags:</code> and
+                            <code class="text-indigo-300">categories:</code> in
+                            front matter feed
+                            <code class="text-indigo-300">site.tags</code> and
+                            <code class="text-indigo-300">site.categories</code>
+                            (hashes keyed by tag/category).
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Layouts -->
+                <div
+                    id="layouts"
+                    class="mx-auto mt-24 max-w-3xl px-6 lg:px-8"
+                >
+                    <h2
+                        class="text-pretty text-4xl font-semibold tracking-tight text-white sm:text-5xl"
+                    >
+                        Layouts
+                    </h2>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Layouts live in
+                        <code class="text-indigo-300">_layouts/</code>. The
+                        default scaffold gives you
+                        <code class="text-indigo-300">_layouts/default.html.erb</code>:
+                    </p>
+                    <div
+                        class="mt-8 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">&lt;!DOCTYPE html&gt;</code>
+<code class="block text-sm">&lt;html&gt;</code>
+<code class="block text-sm">  &lt;head&gt;&lt;title&gt;&lt;%= page.title %&gt;&lt;/title&gt;&lt;/head&gt;</code>
+<code class="block text-sm">  &lt;body&gt;&lt;%= content %&gt;&lt;/body&gt;</code>
+<code class="block text-sm">&lt;/html&gt;</code></pre>
+                    </div>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Layouts are ERB templates with three locals:
+                    </p>
+                    <ul class="mt-4 list-disc pl-6 text-lg/8 text-gray-300 space-y-2">
+                        <li>
+                            <code class="text-indigo-300">content</code> — the
+                            rendered AsciiDoc body of the page or post
+                        </li>
+                        <li>
+                            <code class="text-indigo-300">page</code> — the
+                            page/post object (front matter, url, etc.)
+                        </li>
+                        <li>
+                            <code class="text-indigo-300">site</code> — the site
+                            config and data (title, posts, collections, etc.)
+                        </li>
+                    </ul>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Layouts can chain by declaring their own front matter:
+                    </p>
+                    <div
+                        class="mt-8 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">---</code>
+<code class="block text-sm">layout: default</code>
+<code class="block text-sm">---</code>
+<code class="block text-sm">&lt;article&gt;&lt;%= content %&gt;&lt;/article&gt;</code></pre>
+                    </div>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        A page using
+                        <code class="text-indigo-300">layout: post</code> will
+                        be wrapped in
+                        <code class="text-indigo-300">_layouts/post.html.erb</code>,
+                        which is itself wrapped in
+                        <code class="text-indigo-300">_layouts/default.html.erb</code>.
+                    </p>
+                </div>
+
+                <!-- Includes -->
+                <div
+                    id="includes"
+                    class="mx-auto mt-24 max-w-3xl px-6 lg:px-8"
+                >
+                    <h2
+                        class="text-pretty text-4xl font-semibold tracking-tight text-white sm:text-5xl"
+                    >
+                        Includes (partials)
+                    </h2>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Drop reusable HTML/ERB into
+                        <code class="text-indigo-300">_includes/</code>, then
+                        call
+                        <code class="text-indigo-300">&lt;%= partial 'name.html' %&gt;</code>
+                        from any layout or other partial:
+                    </p>
+                    <div
+                        class="mt-8 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">_includes/</code>
+<code class="block text-sm">  header.html</code>
+<code class="block text-sm">  footer.html</code></pre>
+                    </div>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Partials see the same
+                        <code class="text-indigo-300">site</code>,
+                        <code class="text-indigo-300">page</code>, and
+                        <code class="text-indigo-300">content</code> as the
+                        calling layout.
+                    </p>
+                </div>
+
+                <!-- Data files -->
+                <div
+                    id="data-files"
+                    class="mx-auto mt-24 max-w-3xl px-6 lg:px-8"
+                >
+                    <h2
+                        class="text-pretty text-4xl font-semibold tracking-tight text-white sm:text-5xl"
+                    >
+                        Data files
+                    </h2>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Anything in
+                        <code class="text-indigo-300">_data/</code> is exposed
+                        as
+                        <code class="text-indigo-300">site.data.&lt;filename&gt;</code>:
+                    </p>
+                    <div
+                        class="mt-8 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm"># _data/nav.yml</code>
+<code class="block text-sm">- title: Home</code>
+<code class="block text-sm">  url: /</code>
+<code class="block text-sm">- title: About</code>
+<code class="block text-sm">  url: /about</code></pre>
+                    </div>
+                    <div
+                        class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">&lt;nav&gt;</code>
+<code class="block text-sm">  &lt;% site.data.nav.each do |item| %&gt;</code>
+<code class="block text-sm">    &lt;a href="&lt;%= item['url'] %&gt;"&gt;&lt;%= item['title'] %&gt;&lt;/a&gt;</code>
+<code class="block text-sm">  &lt;% end %&gt;</code>
+<code class="block text-sm">&lt;/nav&gt;</code></pre>
+                    </div>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        YAML and JSON are both supported.
+                    </p>
+                </div>
+
+                <!-- Collections -->
+                <div
+                    id="collections"
+                    class="mx-auto mt-24 max-w-3xl px-6 lg:px-8"
+                >
+                    <h2
+                        class="text-pretty text-4xl font-semibold tracking-tight text-white sm:text-5xl"
+                    >
+                        Collections
+                    </h2>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Declare a collection in
+                        <code class="text-indigo-300">config.yml</code> and
+                        create a matching
+                        <code class="text-indigo-300">_&lt;name&gt;/</code>
+                        directory:
+                    </p>
+                    <div
+                        class="mt-8 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">collections:</code>
+<code class="block text-sm">  recipes:</code>
+<code class="block text-sm">    output: true</code></pre>
+                    </div>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Files in
+                        <code class="text-indigo-300">_recipes/*.adoc</code>
+                        become
+                        <code class="text-indigo-300">site.recipes</code> (an
+                        array of items). With
+                        <code class="text-indigo-300">output: true</code> they
+                        render to
+                        <code class="text-indigo-300">/recipes/&lt;slug&gt;.html</code>.
+                        With
+                        <code class="text-indigo-300">output: false</code>
+                        they're available to layouts but not written to disk.
+                    </p>
+                </div>
+
+                <!-- Permalinks -->
+                <div
+                    id="permalinks"
+                    class="mx-auto mt-24 max-w-3xl px-6 lg:px-8"
+                >
+                    <h2
+                        class="text-pretty text-4xl font-semibold tracking-tight text-white sm:text-5xl"
+                    >
+                        Permalinks
+                    </h2>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Customize URLs per-document:
+                    </p>
+                    <div
+                        class="mt-8 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">---</code>
+<code class="block text-sm">permalink: /custom/path.html</code>
+<code class="block text-sm">---</code></pre>
+                    </div>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Or set a global default for posts in
+                        <code class="text-indigo-300">config.yml</code>:
+                    </p>
+                    <div
+                        class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">permalink: /:year/:month/:day/:slug/</code></pre>
+                    </div>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Templates ending with
+                        <code class="text-indigo-300">/</code> produce pretty
+                        URLs by writing
+                        <code class="text-indigo-300">&lt;path&gt;/index.html</code>.
+                    </p>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Available tokens:
+                        <code class="text-indigo-300">:year</code>,
+                        <code class="text-indigo-300">:month</code>,
+                        <code class="text-indigo-300">:day</code>,
+                        <code class="text-indigo-300">:slug</code>,
+                        <code class="text-indigo-300">:title</code>.
+                    </p>
+                </div>
+
+                <!-- Drafts -->
+                <div
+                    id="drafts"
+                    class="mx-auto mt-24 max-w-3xl px-6 lg:px-8"
+                >
+                    <h2
+                        class="text-pretty text-4xl font-semibold tracking-tight text-white sm:text-5xl"
+                    >
+                        Drafts
+                    </h2>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        Drafts live in
+                        <code class="text-indigo-300">_drafts/&lt;slug&gt;.adoc</code>
+                        (no date prefix). They're excluded by default. Include
+                        them with the
+                        <code class="text-indigo-300">--drafts</code> flag:
+                    </p>
+                    <div
+                        class="mt-8 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                    >
+                        <pre
+                            class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                        >
+<code class="block text-sm">otto build --drafts</code>
+<code class="block text-sm">otto watch --drafts</code></pre>
+                    </div>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        When included, drafts use today's date and sort to the
+                        top of
+                        <code class="text-indigo-300">site.posts</code>.
+                    </p>
+                </div>
+
+                <!-- Health checks -->
+                <div
+                    id="health-checks"
+                    class="mx-auto mt-24 pb-24 max-w-3xl px-6 lg:px-8"
+                >
+                    <h2
+                        class="text-pretty text-4xl font-semibold tracking-tight text-white sm:text-5xl"
+                    >
+                        Health checks
+                    </h2>
+                    <p class="mt-6 text-lg/8 text-gray-300">
+                        <code class="text-indigo-300">otto doctor</code>
+                        verifies the project layout and reports any missing
+                        files.
+                    </p>
+                </div>
+
+                <!-- AsciiDoc primer -->
+                <div
+                    id="asciidoc-primer"
+                    class="flex flex-col mt-24 pb-24 items-center bg-gray-100 px-4"
+                >
+                    <div class="mx-auto max-w-3xl px-6 lg:px-8 mt-24">
+                        <div class="text-center mb-12">
+                            <h2
+                                class="text-5xl font-semibold tracking-tight text-gray-900 sm:text-6xl"
+                            >
+                                AsciiDoc primer
+                            </h2>
+                            <p class="mt-6 text-lg/8 text-gray-700">
+                                A working subset of AsciiDoc to get you
+                                productive. Full reference:
+                                <a
+                                    class="text-indigo-600 hover:text-indigo-500"
+                                    href="https://docs.asciidoctor.org/asciidoc/latest/"
+                                    >docs.asciidoctor.org</a
+                                >.
+                            </p>
+                        </div>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            Document structure
+                        </h3>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">= Document title</code>
+<code class="block text-sm">:author: Ada Lovelace</code>
+<code class="block text-sm">:revdate: 2026-05-01</code>
+<code class="block text-sm"></code>
+<code class="block text-sm">== Section 1</code>
+<code class="block text-sm"></code>
+<code class="block text-sm">A paragraph.</code>
+<code class="block text-sm"></code>
+<code class="block text-sm">== Section 2</code>
+<code class="block text-sm"></code>
+<code class="block text-sm">Another paragraph.</code></pre>
+                        </div>
+                        <p class="mt-6 text-lg/8 text-gray-700">
+                            <code class="bg-gray-200 px-1 rounded">= Title</code>
+                            is the document title.
+                            <code class="bg-gray-200 px-1 rounded">==</code>,
+                            <code class="bg-gray-200 px-1 rounded">===</code>,
+                            etc. are subsections. Attributes
+                            (<code class="bg-gray-200 px-1 rounded">:key: value</code>)
+                            below the title set document-wide variables.
+                        </p>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            Paragraphs and text formatting
+                        </h3>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">A normal paragraph. *Bold*, _italic_, `monospace`, ~subscript~, ^superscript^.</code>
+<code class="block text-sm"></code>
+<code class="block text-sm">A second paragraph separated by a blank line.</code></pre>
+                        </div>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            Links
+                        </h3>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">https://example.com[Example]</code>
+<code class="block text-sm">link:about.html[About this site]</code></pre>
+                        </div>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            Lists
+                        </h3>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">* unordered</code>
+<code class="block text-sm">* bullet</code>
+<code class="block text-sm">** nested</code>
+<code class="block text-sm"></code>
+<code class="block text-sm">. ordered</code>
+<code class="block text-sm">. one</code>
+<code class="block text-sm">. two</code>
+<code class="block text-sm"></code>
+<code class="block text-sm">term:: definition</code>
+<code class="block text-sm">another term:: another definition</code></pre>
+                        </div>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            Code blocks
+                        </h3>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">[source,ruby]</code>
+<code class="block text-sm">----</code>
+<code class="block text-sm">def hello</code>
+<code class="block text-sm">  puts "world"</code>
+<code class="block text-sm">end</code>
+<code class="block text-sm">----</code></pre>
+                        </div>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            Admonitions
+                        </h3>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">NOTE: A short note in line.</code>
+<code class="block text-sm"></code>
+<code class="block text-sm">[WARNING]</code>
+<code class="block text-sm">====</code>
+<code class="block text-sm">A longer warning block</code>
+<code class="block text-sm">that spans multiple lines.</code>
+<code class="block text-sm">====</code></pre>
+                        </div>
+                        <p class="mt-6 text-lg/8 text-gray-700">
+                            Available levels:
+                            <code class="bg-gray-200 px-1 rounded">NOTE</code>,
+                            <code class="bg-gray-200 px-1 rounded">TIP</code>,
+                            <code class="bg-gray-200 px-1 rounded">IMPORTANT</code>,
+                            <code class="bg-gray-200 px-1 rounded">WARNING</code>,
+                            <code class="bg-gray-200 px-1 rounded">CAUTION</code>.
+                        </p>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            Tables
+                        </h3>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">|===</code>
+<code class="block text-sm">| Column 1 | Column 2</code>
+<code class="block text-sm"></code>
+<code class="block text-sm">| cell A1  | cell A2</code>
+<code class="block text-sm">| cell B1  | cell B2</code>
+<code class="block text-sm">|===</code></pre>
+                        </div>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            Images
+                        </h3>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">image::pictures/cat.jpg[A cat, 400, 300]</code></pre>
+                        </div>
+                        <p class="mt-6 text-lg/8 text-gray-700">
+                            The first argument is alt text; numbers are width
+                            and height.
+                        </p>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            Includes
+                        </h3>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">include::shared/disclaimer.adoc[]</code></pre>
+                        </div>
+                        <p class="mt-6 text-lg/8 text-gray-700">
+                            AsciiDoc includes pull file content in at conversion
+                            time. Paths are relative to the including file.
+                        </p>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            Attributes in content
+                        </h3>
+                        <p class="mt-6 text-lg/8 text-gray-700">
+                            Reference site and page metadata anywhere in your
+                            body:
+                        </p>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">This is {site_title}, written by {site_author}.</code>
+<code class="block text-sm">You're reading "{page_title}" — see all posts at {site_url}/blog.</code></pre>
+                        </div>
+                        <p class="mt-6 text-lg/8 text-gray-700">
+                            Front matter keys are prefixed with
+                            <code class="bg-gray-200 px-1 rounded">site_</code>
+                            (from
+                            <code class="bg-gray-200 px-1 rounded">config.yml</code>)
+                            or
+                            <code class="bg-gray-200 px-1 rounded">page_</code>
+                            (from the document's own front matter).
+                        </p>
+
+                        <h3
+                            class="mt-16 text-pretty text-3xl font-semibold tracking-tight text-gray-900"
+                        >
+                            IDs and roles
+                        </h3>
+                        <div
+                            class="mt-6 bg-gray-800 text-white rounded-lg shadow-lg p-6"
+                        >
+                            <pre
+                                class="bg-gray-900 text-gray-300 rounded-lg p-4 overflow-auto"
+                            >
+<code class="block text-sm">[#main-section,role="lead"]</code>
+<code class="block text-sm">== Hello</code></pre>
+                        </div>
+                        <p class="mt-6 text-lg/8 text-gray-700">
+                            Adds
+                            <code class="bg-gray-200 px-1 rounded">id="main-section"</code>
+                            and
+                            <code class="bg-gray-200 px-1 rounded">class="lead"</code>
+                            to the rendered section.
+                        </p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </body>
+</html>
