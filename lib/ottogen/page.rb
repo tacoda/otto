@@ -15,6 +15,7 @@ module Ottogen
     end
 
     attr_reader :path, :front_matter, :body
+    attr_accessor :permalink
 
     def initialize(front_matter:, body:, path: nil)
       @path = path
@@ -22,13 +23,25 @@ module Ottogen
       @body = body
     end
 
+    def url
+      return @permalink.url if @permalink
+      return nil unless @path
+
+      "/#{@path.sub(%r{^pages/}, '').sub(/\.adoc\z/, '.html')}"
+    end
+
     def output_path(build_dir)
+      return @permalink.output_path(build_dir) if @permalink
+
       relative = @path.sub(%r{^pages/}, '').sub(/\.adoc\z/, '.html')
       File.join(build_dir, relative)
     end
 
     def asciidoctor_attributes
-      @front_matter.transform_keys { |key| "page_#{key}" }
+      attrs = @front_matter.transform_keys { |key| "page_#{key}" }
+      page_url = url
+      attrs['page_url'] = page_url if page_url
+      attrs
     end
 
     def respond_to_missing?(name, include_private = false)

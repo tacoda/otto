@@ -114,6 +114,40 @@ RSpec.describe Ottogen::Ottogen do
       end
     end
 
+    it 'honors a per-document permalink: in front matter' do
+      in_otto_project do
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-hello.adoc', "---\npermalink: /custom/path.html\n---\nBody.\n")
+
+        capture_stdout { described_class.build }
+
+        expect(File.exist?('_build/custom/path.html')).to be true
+        expect(File.exist?('_build/hello.html')).to be false
+      end
+    end
+
+    it 'applies a global permalink: from config.yml to posts with date tokens' do
+      in_otto_project(config: "title: T\npermalink: /:year/:month/:day/:slug/\n") do
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-hello.adoc', "= Hello\n\nBody.\n")
+
+        capture_stdout { described_class.build }
+
+        expect(File.exist?('_build/2026/01/15/hello/index.html')).to be true
+        expect(File.read('_build/2026/01/15/hello/index.html')).to include('Body.')
+      end
+    end
+
+    it 'does not apply the global permalink to pages' do
+      in_otto_project(config: "title: T\npermalink: /:year/:month/:day/:slug/\n") do
+        File.write('pages/about.adoc', "= About\n\nAbout body.\n")
+
+        capture_stdout { described_class.build }
+
+        expect(File.exist?('_build/about.html')).to be true
+      end
+    end
+
     it 'renders posts to _build/<slug>.html' do
       in_otto_project do
         FileUtils.mkdir_p('_posts')

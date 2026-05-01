@@ -8,39 +8,13 @@ require 'webrick'
 require_relative 'config'
 require_relative 'layout'
 require_relative 'page'
+require_relative 'permalink'
 require_relative 'post'
+require_relative 'scaffold'
 
 module Ottogen
   class Ottogen
     BUILD_DIR = '_build'
-    CONFIG = <<~YAML
-      title: "Otto site"
-      description: ""
-      url: ""
-      baseurl: ""
-    YAML
-    WELCOME = <<~ADOC
-      ---
-      layout: default
-      title: Welcome
-      ---
-      = Welcome to Otto!
-
-      Otto is a static site generator that uses AsciiDoc as a markup language.
-    ADOC
-
-    DEFAULT_LAYOUT = <<~ERB
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="utf-8">
-          <title><%= page.respond_to?(:title) ? page.title : site.title %></title>
-        </head>
-        <body>
-          <%= content %>
-        </body>
-      </html>
-    ERB
 
     def self.init(dir)
       puts '✨ Initializing static site...'
@@ -82,11 +56,20 @@ module Ottogen
     end
 
     def self.convert_document(doc, config)
+      apply_permalink(doc, config)
       html = render_document(doc, config)
       write_output(doc.output_path(BUILD_DIR), html)
     rescue Layout::Error => e
       puts "❌ Error in #{doc.path}: #{e.message}"
       exit(1)
+    end
+
+    def self.apply_permalink(doc, config)
+      template = doc.front_matter['permalink']
+      template ||= config['permalink'] if doc.is_a?(Post)
+      return if template.nil?
+
+      doc.permalink = Permalink.expand(template, doc)
     end
 
     def self.render_document(doc, config)
@@ -149,24 +132,11 @@ module Ottogen
 
     def self.init_with_dir(dir)
       Dir.mkdir(dir)
-      scaffold(dir)
+      Scaffold.write(dir)
     end
 
     def self.init_in_current_dir
-      scaffold('.')
-    end
-
-    SCAFFOLD_DIRS = %w[assets pages _layouts _includes _data _posts].freeze
-    SCAFFOLD_FILES = {
-      'config.yml' => CONFIG,
-      'pages/index.adoc' => WELCOME,
-      '_layouts/default.html.erb' => DEFAULT_LAYOUT
-    }.freeze
-
-    def self.scaffold(root)
-      FileUtils.touch(File.join(root, '.otto'))
-      SCAFFOLD_DIRS.each { |dir| FileUtils.mkdir_p(File.join(root, dir)) }
-      SCAFFOLD_FILES.each { |path, content| File.write(File.join(root, path), content) }
+      Scaffold.write('.')
     end
 
     def self.error_if_not_otto_project

@@ -83,7 +83,18 @@ RSpec.describe Ottogen::Page do
 
         attrs = described_class.read('post.adoc').asciidoctor_attributes
 
-        expect(attrs).to eq('page_title' => 'Hi', 'page_author' => 'Ada')
+        expect(attrs).to include('page_title' => 'Hi', 'page_author' => 'Ada')
+      end
+    end
+
+    it 'includes page_url derived from the source path' do
+      in_tmp_dir do
+        FileUtils.mkdir_p('pages')
+        File.write('pages/about.adoc', "---\ntitle: About\n---\nBody.\n")
+
+        attrs = described_class.read('pages/about.adoc').asciidoctor_attributes
+
+        expect(attrs['page_url']).to eq('/about.html')
       end
     end
   end

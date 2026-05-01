@@ -35,6 +35,7 @@ module Ottogen
     end
 
     attr_reader :path, :date, :slug, :front_matter, :body
+    attr_accessor :permalink
 
     def initialize(path:, date:, slug:, front_matter:, body:)
       @path = path
@@ -49,10 +50,14 @@ module Ottogen
     end
 
     def url
+      return @permalink.url if @permalink
+
       "/#{slug}.html"
     end
 
     def output_path(build_dir)
+      return @permalink.output_path(build_dir) if @permalink
+
       File.join(build_dir, "#{slug}.html")
     end
 
@@ -62,6 +67,7 @@ module Ottogen
       attrs['page_date'] = date.iso8601
       attrs['page_slug'] = slug
       attrs['page_url'] = url
+      attrs.delete('page_permalink')
       attrs
     end
 
