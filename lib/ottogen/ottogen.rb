@@ -6,6 +6,7 @@ require 'listen'
 require 'webrick'
 
 require_relative 'config'
+require_relative 'layout'
 require_relative 'page'
 
 module Ottogen
@@ -18,10 +19,27 @@ module Ottogen
       baseurl: ""
     YAML
     WELCOME = <<~ADOC
+      ---
+      layout: default
+      title: Welcome
+      ---
       = Welcome to Otto!
 
       Otto is a static site generator that uses AsciiDoc as a markup language.
     ADOC
+
+    DEFAULT_LAYOUT = <<~ERB
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8">
+          <title><%= page.respond_to?(:title) ? page.title : site.title %></title>
+        </head>
+        <body>
+          <%= content %>
+        </body>
+      </html>
+    ERB
 
     def self.init(dir)
       puts '✨ Initializing static site...'
@@ -56,16 +74,32 @@ module Ottogen
 
     def self.convert_page(path, config)
       page = Page.read(path)
-      output_path = "#{BUILD_DIR}/#{path.sub(%r{^pages/}, '').sub(/\.adoc\z/, '.html')}"
-      attributes = config.asciidoctor_attributes.merge(page.asciidoctor_attributes)
-      Asciidoctor.convert(page.body,
-                          safe: :safe,
-                          mkdirs: true,
-                          attributes: attributes,
-                          to_file: output_path)
-    rescue Page::Error => e
+      html = render_page(page, config)
+      write_output(output_path_for(path), html)
+    rescue Page::Error, Layout::Error => e
       puts "❌ Error in #{path}: #{e.message}"
       exit(1)
+    end
+
+    def self.render_page(page, config)
+      layout_name = page.front_matter['layout']
+      attributes = config.asciidoctor_attributes.merge(page.asciidoctor_attributes)
+      body = Asciidoctor.convert(page.body,
+                                 safe: :safe,
+                                 standalone: layout_name.nil?,
+                                 attributes: attributes)
+      return body unless layout_name
+
+      Layout.find(layout_name).render(content: body, site: config, page: page)
+    end
+
+    def self.output_path_for(source_path)
+      "#{BUILD_DIR}/#{source_path.sub(%r{^pages/}, '').sub(/\.adoc\z/, '.html')}"
+    end
+
+    def self.write_output(path, html)
+      FileUtils.mkdir_p(File.dirname(path))
+      File.write(path, html)
     end
 
     def self.generate(page)
@@ -111,19 +145,21 @@ module Ottogen
 
     def self.init_with_dir(dir)
       Dir.mkdir(dir)
-      FileUtils.touch("#{dir}/.otto")
-      File.write("#{dir}/config.yml", CONFIG)
-      FileUtils.mkdir_p("#{dir}/assets")
-      FileUtils.mkdir_p("#{dir}/pages")
-      File.write("#{dir}/pages/index.adoc", WELCOME)
+      scaffold(dir)
     end
 
     def self.init_in_current_dir
-      FileUtils.touch('.otto')
-      File.write('config.yml', CONFIG)
-      FileUtils.mkdir_p('assets')
-      FileUtils.mkdir_p('pages')
-      File.write('pages/index.adoc', WELCOME)
+      scaffold('.')
+    end
+
+    def self.scaffold(root)
+      FileUtils.touch(File.join(root, '.otto'))
+      File.write(File.join(root, 'config.yml'), CONFIG)
+      FileUtils.mkdir_p(File.join(root, 'assets'))
+      FileUtils.mkdir_p(File.join(root, 'pages'))
+      FileUtils.mkdir_p(File.join(root, '_layouts'))
+      File.write(File.join(root, 'pages', 'index.adoc'), WELCOME)
+      File.write(File.join(root, '_layouts', 'default.html.erb'), DEFAULT_LAYOUT)
     end
 
     def self.error_if_not_otto_project

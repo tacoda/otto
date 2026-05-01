@@ -28,5 +28,16 @@ module Ottogen
     def asciidoctor_attributes
       @data.transform_keys { |key| "site_#{key}" }
     end
+
+    def respond_to_missing?(name, include_private = false)
+      @data.key?(name.to_s) || super
+    end
+
+    def method_missing(name, *args)
+      key = name.to_s
+      return @data[key] if @data.key?(key)
+
+      super
+    end
   end
 end

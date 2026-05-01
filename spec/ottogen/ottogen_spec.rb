@@ -99,6 +99,67 @@ RSpec.describe Ottogen::Ottogen do
       end
     end
 
+    it 'wraps a page in its declared layout' do
+      in_otto_project do
+        FileUtils.mkdir_p('_layouts')
+        File.write('_layouts/default.html.erb', '<html><body><%= content %></body></html>')
+        File.write('pages/index.adoc', "---\nlayout: default\n---\n= Hi\n\nHello.\n")
+
+        capture_stdout { described_class.build }
+
+        html = File.read('_build/index.html')
+        expect(html).to start_with('<html><body>')
+        expect(html).to include('Hello.')
+        expect(html).to end_with('</body></html>')
+      end
+    end
+
+    it 'chains layouts (post -> default)' do
+      in_otto_project do
+        FileUtils.mkdir_p('_layouts')
+        File.write('_layouts/default.html.erb', '<html><body><%= content %></body></html>')
+        File.write('_layouts/post.html.erb', "---\nlayout: default\n---\n<article><%= content %></article>")
+        File.write('pages/index.adoc', "---\nlayout: post\n---\n= Hi\n\nHello.\n")
+
+        capture_stdout { described_class.build }
+
+        html = File.read('_build/index.html')
+        expect(html).to include('<html><body><article>')
+        expect(html).to include('Hello.')
+        expect(html).to include('</article></body></html>')
+      end
+    end
+
+    it 'still emits standalone HTML for pages without a layout' do
+      in_otto_project do
+        File.write('pages/index.adoc', "= Hi\n\nNo layout here.\n")
+
+        capture_stdout { described_class.build }
+
+        html = File.read('_build/index.html')
+        expect(html).to include('<!DOCTYPE html>')
+        expect(html).to include('No layout here.')
+      end
+    end
+
+    it 'exits with a friendly error when a page references a missing layout' do
+      in_otto_project do
+        File.write('pages/index.adoc', "---\nlayout: missing\n---\n= Hi\n\nHello.\n")
+
+        buffer = StringIO.new
+        original = $stdout
+        $stdout = buffer
+        begin
+          expect { described_class.build }.to raise_error(SystemExit)
+        ensure
+          $stdout = original
+        end
+
+        expect(buffer.string).to include('❌')
+        expect(buffer.string).to include('missing')
+      end
+    end
+
     it 'exits with a friendly error when a page has malformed front matter' do
       in_otto_project do
         File.write('pages/index.adoc', "---\ntitle: 'unclosed\n---\nBody\n")
@@ -125,6 +186,16 @@ RSpec.describe Ottogen::Ottogen do
 
         config = YAML.safe_load_file('site/config.yml')
         expect(config.keys).to include('title', 'description', 'url', 'baseurl')
+      end
+    end
+
+    it 'scaffolds _layouts/default.html.erb with a starter template' do
+      in_tmp_dir do
+        capture_stdout { described_class.init('site') }
+
+        path = 'site/_layouts/default.html.erb'
+        expect(File.exist?(path)).to be true
+        expect(File.read(path)).to include('<%= content %>')
       end
     end
   end
