@@ -149,4 +149,20 @@ RSpec.describe Ottogen::Config do
       end
     end
   end
+
+  describe '#posts' do
+    it 'exposes site.posts sorted by date descending' do
+      in_tmp_dir do
+        File.write('config.yml', "title: T\n")
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-old.adoc', "= Old\n")
+        File.write('_posts/2026-02-15-new.adoc', "= New\n")
+        File.write('_posts/2026-01-30-mid.adoc', "= Mid\n")
+
+        slugs = described_class.load.posts.map(&:slug)
+
+        expect(slugs).to eq(%w[new mid old])
+      end
+    end
+  end
 end

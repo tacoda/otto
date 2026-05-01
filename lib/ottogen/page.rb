@@ -9,16 +9,22 @@ module Ottogen
     def self.read(path)
       raw = File.read(path)
       front_matter, body = FrontMatter.split(raw, path)
-      new(front_matter: front_matter, body: body)
+      new(path: path, front_matter: front_matter, body: body)
     rescue FrontMatter::Error => e
       raise Error, e.message
     end
 
-    attr_reader :front_matter, :body
+    attr_reader :path, :front_matter, :body
 
-    def initialize(front_matter:, body:)
+    def initialize(front_matter:, body:, path: nil)
+      @path = path
       @front_matter = front_matter
       @body = body
+    end
+
+    def output_path(build_dir)
+      relative = @path.sub(%r{^pages/}, '').sub(/\.adoc\z/, '.html')
+      File.join(build_dir, relative)
     end
 
     def asciidoctor_attributes

@@ -8,6 +8,7 @@ require 'webrick'
 require_relative 'config'
 require_relative 'layout'
 require_relative 'page'
+require_relative 'post'
 
 module Ottogen
   class Ottogen
@@ -66,35 +67,38 @@ module Ottogen
       puts '🔨 Building static site...'
       error_if_not_otto_project
       config = load_config
+      pages = load_pages
       FileUtils.mkdir_p(BUILD_DIR)
       FileUtils.cp_r 'assets/', "#{BUILD_DIR}/assets"
-      Dir.glob('pages/**/*.adoc').each { |path| convert_page(path, config) }
+      (pages + config.posts).each { |doc| convert_document(doc, config) }
       puts '✅'
     end
 
-    def self.convert_page(path, config)
-      page = Page.read(path)
-      html = render_page(page, config)
-      write_output(output_path_for(path), html)
-    rescue Page::Error, Layout::Error => e
-      puts "❌ Error in #{path}: #{e.message}"
+    def self.load_pages
+      Dir.glob('pages/**/*.adoc').map { |path| Page.read(path) }
+    rescue Page::Error => e
+      puts "❌ Error: #{e.message}"
       exit(1)
     end
 
-    def self.render_page(page, config)
-      layout_name = page.front_matter['layout']
-      attributes = config.asciidoctor_attributes.merge(page.asciidoctor_attributes)
-      body = Asciidoctor.convert(page.body,
+    def self.convert_document(doc, config)
+      html = render_document(doc, config)
+      write_output(doc.output_path(BUILD_DIR), html)
+    rescue Layout::Error => e
+      puts "❌ Error in #{doc.path}: #{e.message}"
+      exit(1)
+    end
+
+    def self.render_document(doc, config)
+      layout_name = doc.front_matter['layout']
+      attributes = config.asciidoctor_attributes.merge(doc.asciidoctor_attributes)
+      body = Asciidoctor.convert(doc.body,
                                  safe: :safe,
                                  standalone: layout_name.nil?,
                                  attributes: attributes)
       return body unless layout_name
 
-      Layout.find(layout_name).render(content: body, site: config, page: page)
-    end
-
-    def self.output_path_for(source_path)
-      "#{BUILD_DIR}/#{source_path.sub(%r{^pages/}, '').sub(/\.adoc\z/, '.html')}"
+      Layout.find(layout_name).render(content: body, site: config, page: doc)
     end
 
     def self.write_output(path, html)
@@ -152,7 +156,7 @@ module Ottogen
       scaffold('.')
     end
 
-    SCAFFOLD_DIRS = %w[assets pages _layouts _includes _data].freeze
+    SCAFFOLD_DIRS = %w[assets pages _layouts _includes _data _posts].freeze
     SCAFFOLD_FILES = {
       'config.yml' => CONFIG,
       'pages/index.adoc' => WELCOME,

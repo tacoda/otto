@@ -114,6 +114,33 @@ RSpec.describe Ottogen::Ottogen do
       end
     end
 
+    it 'renders posts to _build/<slug>.html' do
+      in_otto_project do
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-hello-world.adoc', "= Hello\n\nBody.\n")
+
+        capture_stdout { described_class.build }
+
+        expect(File.exist?('_build/hello-world.html')).to be true
+        expect(File.read('_build/hello-world.html')).to include('Body.')
+      end
+    end
+
+    it 'exposes site.posts to layouts' do
+      in_otto_project do
+        FileUtils.mkdir_p('_layouts')
+        FileUtils.mkdir_p('_posts')
+        File.write('_posts/2026-01-15-only-post.adoc', "= Hi\n\nBody.\n")
+        File.write('_layouts/default.html.erb', '<nav><%= site.posts.first.title %></nav><%= content %>')
+        File.write('pages/index.adoc', "---\nlayout: default\n---\nIndex.\n")
+
+        capture_stdout { described_class.build }
+
+        html = File.read('_build/index.html')
+        expect(html).to include('<nav>Only Post</nav>')
+      end
+    end
+
     it 'exposes site.data.<file> in layouts' do
       in_otto_project do
         FileUtils.mkdir_p('_layouts')
@@ -244,6 +271,14 @@ RSpec.describe Ottogen::Ottogen do
         capture_stdout { described_class.init('site') }
 
         expect(Dir.exist?('site/_data')).to be true
+      end
+    end
+
+    it 'scaffolds a _posts/ directory' do
+      in_tmp_dir do
+        capture_stdout { described_class.init('site') }
+
+        expect(Dir.exist?('site/_posts')).to be true
       end
     end
   end

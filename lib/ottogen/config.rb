@@ -3,6 +3,8 @@
 require 'json'
 require 'yaml'
 
+require_relative 'post'
+
 module Ottogen
   class Config
     class Error < StandardError; end
@@ -15,10 +17,17 @@ module Ottogen
       raise Error, "config.yml not found at #{path}" unless File.exist?(path)
 
       values = YAML.safe_load_file(path) || {}
-      new(values, load_data_files)
+      new(values, load_data_files, load_posts)
     rescue Psych::SyntaxError => e
       raise Error, "malformed YAML in #{path}: #{e.message}"
     end
+
+    def self.load_posts
+      Post.discover.sort_by(&:date).reverse
+    rescue Post::Error => e
+      raise Error, e.message
+    end
+    private_class_method :load_posts
 
     def self.load_data_files
       return {} unless Dir.exist?(DATA_DIR)
@@ -39,12 +48,13 @@ module Ottogen
     end
     private_class_method :load_data_files, :parse_data_file
 
-    def initialize(values, data_files = {})
+    def initialize(values, data_files = {}, posts = [])
       @values = values
       @data = Data.new(data_files)
+      @posts = posts
     end
 
-    attr_reader :data
+    attr_reader :data, :posts
 
     def [](key)
       @values[key.to_s]
