@@ -6,6 +6,7 @@ require 'listen'
 require 'webrick'
 
 require_relative 'config'
+require_relative 'page'
 
 module Ottogen
   class Ottogen
@@ -49,16 +50,22 @@ module Ottogen
       config = load_config
       FileUtils.mkdir_p(BUILD_DIR)
       FileUtils.cp_r 'assets/', "#{BUILD_DIR}/assets"
-      docs = Dir.glob('pages/**/*.adoc').map { |name| name.split('.').first }
-      docs.each do |doc|
-        page = doc.sub(%r{^pages/}, '')
-        Asciidoctor.convert_file "#{doc}.adoc",
-                                 safe: :safe,
-                                 mkdirs: true,
-                                 attributes: config.asciidoctor_attributes,
-                                 to_file: "#{BUILD_DIR}/#{page}.html"
-      end
+      Dir.glob('pages/**/*.adoc').each { |path| convert_page(path, config) }
       puts '✅'
+    end
+
+    def self.convert_page(path, config)
+      page = Page.read(path)
+      output_path = "#{BUILD_DIR}/#{path.sub(%r{^pages/}, '').sub(/\.adoc\z/, '.html')}"
+      attributes = config.asciidoctor_attributes.merge(page.asciidoctor_attributes)
+      Asciidoctor.convert(page.body,
+                          safe: :safe,
+                          mkdirs: true,
+                          attributes: attributes,
+                          to_file: output_path)
+    rescue Page::Error => e
+      puts "❌ Error in #{path}: #{e.message}"
+      exit(1)
     end
 
     def self.generate(page)

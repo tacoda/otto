@@ -35,6 +35,87 @@ RSpec.describe Ottogen::Ottogen do
         expect(File.exist?('_build/index.html')).to be true
       end
     end
+
+    it 'resolves {page_title} from front matter in rendered HTML' do
+      in_otto_project do
+        File.write('pages/index.adoc', <<~ADOC)
+          ---
+          title: My Page
+          ---
+          = Index
+
+          Welcome to {page_title}.
+        ADOC
+
+        capture_stdout { described_class.build }
+
+        expect(File.read('_build/index.html')).to include('Welcome to My Page.')
+      end
+    end
+
+    it 'resolves arbitrary front matter keys in rendered HTML' do
+      in_otto_project do
+        File.write('pages/index.adoc', <<~ADOC)
+          ---
+          author: Ada Lovelace
+          ---
+          = Index
+
+          Written by {page_author}.
+        ADOC
+
+        capture_stdout { described_class.build }
+
+        expect(File.read('_build/index.html')).to include('Written by Ada Lovelace.')
+      end
+    end
+
+    it 'does not include front matter delimiters in rendered HTML' do
+      in_otto_project do
+        File.write('pages/index.adoc', <<~ADOC)
+          ---
+          title: My Page
+          ---
+          = Index
+
+          Body.
+        ADOC
+
+        capture_stdout { described_class.build }
+
+        html = File.read('_build/index.html')
+        expect(html).not_to include('---')
+        expect(html).not_to include('title: My Page')
+      end
+    end
+
+    it 'still builds pages without front matter' do
+      in_otto_project do
+        File.write('pages/index.adoc', "= Plain\n\nNo front matter here.\n")
+
+        capture_stdout { described_class.build }
+
+        expect(File.read('_build/index.html')).to include('No front matter here.')
+      end
+    end
+
+    it 'exits with a friendly error when a page has malformed front matter' do
+      in_otto_project do
+        File.write('pages/index.adoc', "---\ntitle: 'unclosed\n---\nBody\n")
+
+        buffer = StringIO.new
+        original = $stdout
+        $stdout = buffer
+        begin
+          expect { described_class.build }.to raise_error(SystemExit)
+        ensure
+          $stdout = original
+        end
+
+        expect(buffer.string).to include('❌')
+        expect(buffer.string).to include('pages/index.adoc')
+      end
+    end
   end
 
   describe '.init' do
