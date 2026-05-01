@@ -1,42 +1,44 @@
+# frozen_string_literal: true
+
 require 'thor'
-require_relative './ottogen'
+require_relative 'ottogen'
 
 module Ottogen
   class Otto < Thor
-    desc "init [DIR]", "Initialize a new otto static site in DIR (defaults to the current directory)"
-    def init(dir=nil)
+    desc 'init [DIR]', 'Initialize a new otto static site in DIR (defaults to the current directory)'
+    def init(dir = nil)
       Ottogen.init(dir)
     end
 
-    desc "build", "Build the static site"
+    desc 'build', 'Build the static site'
     def build
       Ottogen.build
     end
 
-    map "b" => :build
+    map 'b' => :build
 
-    desc "generate PAGE", "Generate a new page"
+    desc 'generate PAGE', 'Generate a new page'
     def generate(page)
       Ottogen.generate(page)
     end
 
-    map "g" => :generate
+    map 'g' => :generate
 
-    desc "clean", "Clean the static site"
+    desc 'clean', 'Clean the static site'
     def clean
       Ottogen.clean
     end
 
-    desc "watch", "Watch changes to static site"
+    desc 'watch', 'Watch changes to static site'
     def watch
       Ottogen.watch
     end
 
-    desc "serve", "Serve the static site"
+    desc 'serve', 'Serve the static site'
     def serve
       Ottogen.serve
     end
 
-    map "s" => :serve
+    map 's' => :serve
   end
 end

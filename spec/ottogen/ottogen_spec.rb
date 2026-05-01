@@ -1,9 +1,7 @@
-require 'ottogen/ottogen'
+# frozen_string_literal: true
 
-module Ottogen
-  describe Ottogen do
-    it 'works' do
-      expect(1).to eq(1)
-    end
+RSpec.describe Ottogen::Ottogen do
+  it 'is loaded' do
+    expect(defined?(Ottogen::Ottogen)).to eq('constant')
   end
 end
