@@ -27,6 +27,16 @@ module Ottogen
     ensure
       $stdout = original
     end
+
+    def in_otto_project(config: "title: Test site\n", &block)
+      in_tmp_dir do |dir|
+        FileUtils.touch('.otto')
+        File.write('config.yml', config)
+        FileUtils.mkdir_p('pages')
+        FileUtils.mkdir_p('assets')
+        block.call(dir)
+      end
+    end
   end
 end
 

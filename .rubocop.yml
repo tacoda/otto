@@ -28,3 +28,8 @@ Metrics/BlockLength:
 
 Metrics/MethodLength:
   Max: 25
+
+# Ottogen::Ottogen is the CLI orchestrator and will shrink as we extract
+# Site/Page/Layout/Builder over the 1.0 roadmap. Hold a generous ceiling.
+Metrics/ClassLength:
+  Max: 150

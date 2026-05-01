@@ -5,11 +5,16 @@ require 'fileutils'
 require 'listen'
 require 'webrick'
 
+require_relative 'config'
+
 module Ottogen
   class Ottogen
     BUILD_DIR = '_build'
     CONFIG = <<~YAML
       title: "Otto site"
+      description: ""
+      url: ""
+      baseurl: ""
     YAML
     WELCOME = <<~ADOC
       = Welcome to Otto!
@@ -41,6 +46,7 @@ module Ottogen
     def self.build
       puts '🔨 Building static site...'
       error_if_not_otto_project
+      config = load_config
       FileUtils.mkdir_p(BUILD_DIR)
       FileUtils.cp_r 'assets/', "#{BUILD_DIR}/assets"
       docs = Dir.glob('pages/**/*.adoc').map { |name| name.split('.').first }
@@ -49,6 +55,7 @@ module Ottogen
         Asciidoctor.convert_file "#{doc}.adoc",
                                  safe: :safe,
                                  mkdirs: true,
+                                 attributes: config.asciidoctor_attributes,
                                  to_file: "#{BUILD_DIR}/#{page}.html"
       end
       puts '✅'
@@ -116,6 +123,13 @@ module Ottogen
       return if File.exist?('.otto')
 
       puts '❌ Error: Current directory is not an otto project'
+      exit(1)
+    end
+
+    def self.load_config
+      Config.load
+    rescue Config::Error => e
+      puts "❌ Error: #{e.message}"
       exit(1)
     end
   end
